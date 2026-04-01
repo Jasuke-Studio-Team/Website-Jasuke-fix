@@ -22,10 +22,15 @@ export function Navbar({ activeTab, setActiveTab }: NavbarProps) {
     <>
       <nav className="fixed top-0 w-full z-50 flex justify-between items-center px-8 py-4 bg-background/80 backdrop-blur-md border-b border-primary/20 shadow-[0_4px_20px_rgba(255,179,0,0.08)]">
         <div 
-          className="text-2xl font-bold text-primary drop-shadow-[0_2px_4px_rgba(255,179,0,0.5)] font-headline tracking-tight cursor-pointer"
+          className="cursor-pointer"
           onClick={() => setActiveTab('home')}
         >
-          Jasuke Studio
+          <img 
+            src="/Asset/logo Jasuke New.png" 
+            alt="Jasuke Studio" 
+            className="h-10 w-auto object-contain drop-shadow-[0_2px_4px_rgba(255,179,0,0.5)]"
+            referrerPolicy="no-referrer"
+          />
         </div>
 
         {/* Desktop Nav */}
