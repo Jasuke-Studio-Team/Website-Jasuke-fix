@@ -1,13 +1,12 @@
 import React from 'react';
 import { motion } from 'motion/react';
 import { VideoPlayer } from './VideoPlayer';
-import { PortfolioItem, Article, OriginalIP } from '../types';
-import { ArrowRight, Star, Book } from 'lucide-react';
+import { PortfolioItem, Article } from '../types';
+import { ArrowRight, Star } from 'lucide-react';
 
-export function HomeView({ portfolio, articles, original_ip }: { 
+export function HomeView({ portfolio, articles }: { 
   portfolio: PortfolioItem[], 
-  articles: Article[], 
-  original_ip: OriginalIP[] 
+  articles: Article[],
 }) {
   return (
     <div className="space-y-24 pb-24">

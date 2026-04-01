@@ -4,14 +4,16 @@ import { HomeView } from './components/HomeView';
 import { PortfolioView } from './components/PortfolioView';
 import { IPView } from './components/IPView';
 import { BlogView } from './components/BlogView';
+import { ArticleView } from './components/ArticleView';
 import { fetchCMSData } from './services/cmsService';
-import { CMSData } from './types';
+import { CMSData, Article } from './types';
 import { motion, AnimatePresence } from 'motion/react';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState('home');
   const [data, setData] = useState<CMSData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [selectedArticle, setSelectedArticle] = useState<Article | null>(null);
 
   useEffect(() => {
     async function loadData() {
@@ -21,6 +23,21 @@ export default function App() {
     }
     loadData();
   }, []);
+
+  function handleTabChange(tab: string) {
+    setSelectedArticle(null);
+    setActiveTab(tab);
+  }
+
+  function handleSelectArticle(article: Article) {
+    setSelectedArticle(article);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function handleBackToBlog() {
+    setSelectedArticle(null);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
 
   if (loading) {
     return (
@@ -32,10 +49,32 @@ export default function App() {
     );
   }
 
+  // Full-screen article reading view
+  if (selectedArticle && data) {
+    return (
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={selectedArticle.id}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.3 }}
+        >
+          <ArticleView
+            article={selectedArticle}
+            allArticles={data.articles}
+            onBack={handleBackToBlog}
+            onSelectArticle={handleSelectArticle}
+          />
+        </motion.div>
+      </AnimatePresence>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-background selection:bg-primary/30">
-      <Navbar activeTab={activeTab} setActiveTab={setActiveTab} />
-      
+      <Navbar activeTab={activeTab} setActiveTab={handleTabChange} />
+
       <main className="pt-20">
         <AnimatePresence mode="wait">
           <motion.div
@@ -46,26 +85,30 @@ export default function App() {
             transition={{ duration: 0.3 }}
           >
             {activeTab === 'home' && data && (
-              <HomeView 
-                portfolio={data.portfolio} 
-                articles={data.articles} 
-                original_ip={data.original_ip} 
+              <HomeView
+                portfolio={data.portfolio}
+                articles={data.articles}
               />
             )}
             {activeTab === 'portfolio' && data && (
               <PortfolioView items={data.portfolio} />
             )}
             {activeTab === 'ip' && data && (
-              <IPView ips={data.original_ip} />
+              <IPView
+                ipReady={data.ip_ready}
+                ipInProgress={data.ip_in_progress}
+              />
             )}
             {activeTab === 'blog' && data && (
-              <BlogView articles={data.articles} />
+              <BlogView
+                articles={data.articles}
+                onSelectArticle={handleSelectArticle}
+              />
             )}
           </motion.div>
         </AnimatePresence>
       </main>
 
-      {/* Footer */}
       <footer className="w-full py-12 px-8 bg-black border-t border-secondary/20 flex flex-col items-center justify-center gap-6">
         <div className="flex gap-8 text-on-surface-variant font-sans text-xs uppercase tracking-widest">
           <a className="text-stone-600 hover:text-primary underline underline-offset-4 transition-colors" href="#">The Ledger</a>

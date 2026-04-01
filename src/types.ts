@@ -4,7 +4,8 @@ export interface PortfolioItem {
   description: string;
   category: string;
   image_url: string;
-  video_url?: string;
+  video_url?: string;      // Video Teaser column
+  project_link?: string;   // Project Link column
 }
 
 export interface Article {
@@ -16,20 +17,35 @@ export interface Article {
   author: string;
   image_url: string;
   category: string;
+  video_url?: string;
 }
 
-export interface OriginalIP {
+/** One launched / published IP (sheet: "IP Ready") */
+export interface IPReadyItem {
   id: string;
   title: string;
   description: string;
-  status: string;
   image_url: string;
-  lore_index: string;
+  teaser_url?: string;       // Teaser column
+  download_link?: string;    // Link Download column
+}
+
+/** One progress stage for the in-progress IP project (sheet: "IP In Progress") */
+export interface IPInProgressStage {
+  id: string;
+  project_title: string;       // Project Title  (col A)
+  project_description: string; // Project Description (col B)
+  stage_name: string;          // Stage Name (col C)
+  status: string;              // Status (col D)
+  progress_note: string;       // Lore Update / Progress Note (col E)
+  target_date: string;         // Target Date (col F)
+  image_url: string;           // Image Url (col H)
 }
 
 export interface CMSData {
   portfolio: PortfolioItem[];
   articles: Article[];
-  original_ip: OriginalIP[];
+  ip_ready: IPReadyItem[];
+  ip_in_progress: IPInProgressStage[];
   lastUpdated: string;
 }
