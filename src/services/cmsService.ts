@@ -82,7 +82,10 @@ export async function fetchCMSData(): Promise<CMSData> {
   }
 
   try {
-    const response = await fetch(gasUrl);
+    const fetchUrl = `${gasUrl}${gasUrl.includes('?') ? '&' : '?'}_t=${new Date().getTime()}`;
+    const response = await fetch(fetchUrl, {
+      cache: 'no-store', // Request the browser not to cache
+    });
     if (!response.ok) throw new Error('Failed to fetch CMS data');
     const raw = await response.json();
 

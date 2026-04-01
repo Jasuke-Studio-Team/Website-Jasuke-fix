@@ -39,6 +39,23 @@ export default function App() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
+  function scrollToContact() {
+    if (activeTab !== 'home') {
+      setActiveTab('home');
+      setTimeout(() => {
+        const contactForm = document.getElementById('contact-form');
+        if (contactForm) {
+          contactForm.scrollIntoView({ behavior: 'smooth' });
+        }
+      }, 100);
+    } else {
+      const contactForm = document.getElementById('contact-form');
+      if (contactForm) {
+        contactForm.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+  }
+
   if (loading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
@@ -73,7 +90,11 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-background selection:bg-primary/30">
-      <Navbar activeTab={activeTab} setActiveTab={handleTabChange} />
+      <Navbar 
+        activeTab={activeTab} 
+        setActiveTab={handleTabChange} 
+        onContactClick={scrollToContact}
+      />
 
       <main className="pt-20">
         <AnimatePresence mode="wait">
@@ -89,6 +110,8 @@ export default function App() {
                 portfolio={data.portfolio}
                 articles={data.articles}
                 team={data.team}
+                onContactClick={scrollToContact}
+                onPortfolioClick={() => handleTabChange('portfolio')}
               />
             )}
             {activeTab === 'portfolio' && data && (

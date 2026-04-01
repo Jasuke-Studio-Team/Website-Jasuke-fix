@@ -2,12 +2,14 @@ import React from 'react';
 import { motion } from 'motion/react';
 import { VideoPlayer } from './VideoPlayer';
 import { PortfolioItem, Article, TeamMember } from '../types';
-import { ArrowRight, Star } from 'lucide-react';
+import { ArrowRight, Star, Mail } from 'lucide-react';
 
-export function HomeView({ portfolio, articles, team }: { 
+export function HomeView({ portfolio, articles, team, onContactClick, onPortfolioClick }: { 
   portfolio: PortfolioItem[], 
   articles: Article[],
   team: TeamMember[],
+  onContactClick: () => void,
+  onPortfolioClick: () => void,
 }) {
   return (
     <div className="space-y-24 pb-24">
@@ -34,10 +36,16 @@ export function HomeView({ portfolio, articles, team }: {
           </p>
           
           <div className="flex flex-wrap justify-center gap-4">
-            <button className="bg-primary text-primary-foreground font-bold px-8 py-4 rounded-sm hover:brightness-110 active:scale-95 transition-all shadow-lg shadow-primary/20">
+            <button 
+              onClick={onContactClick}
+              className="bg-primary text-primary-foreground font-bold px-8 py-4 rounded-sm hover:brightness-110 active:scale-95 transition-all shadow-lg shadow-primary/20"
+            >
               Enter the Tavern
             </button>
-            <button className="border border-outline text-on-surface font-bold px-8 py-4 rounded-sm hover:bg-surface-high transition-all">
+            <button 
+              onClick={onPortfolioClick}
+              className="border border-outline text-on-surface font-bold px-8 py-4 rounded-sm hover:bg-surface-high transition-all"
+            >
               Our Portfolio
             </button>
           </div>
@@ -91,33 +99,80 @@ export function HomeView({ portfolio, articles, team }: {
         </div>
       </section>
 
-      {/* Featured Original IP */}
-      <section className="bg-surface-high py-24">
-        <div className="max-w-7xl mx-auto px-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
-            <div>
-              <span className="text-primary italic mb-4 block">The Ledger of Deeds</span>
-              <h2 className="text-5xl text-on-surface mb-8 leading-tight">Legends We've Helped Forge</h2>
-              <p className="text-on-surface-variant mb-12">
-                Our vault is filled with the stories of guilds and kingdoms we've elevated through digital alchemy. From independent champions to global empires.
-              </p>
-              <div className="flex gap-4">
-                <button className="bg-primary text-primary-foreground font-bold px-8 py-4 rounded-sm hover:brightness-110 active:scale-95 transition-all">
-                  View The Archive
-                </button>
-              </div>
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-4 pt-12">
-                <img src="https://picsum.photos/seed/game1/400/500" alt="Work 1" className="rounded-sm border-2 border-secondary shadow-xl" />
-                <img src="https://picsum.photos/seed/game2/400/400" alt="Work 2" className="rounded-sm border-2 border-secondary shadow-xl" />
-              </div>
-              <div className="space-y-4">
-                <img src="https://picsum.photos/seed/game3/400/400" alt="Work 3" className="rounded-sm border-2 border-secondary shadow-xl" />
-                <img src="https://picsum.photos/seed/game4/400/500" alt="Work 4" className="rounded-sm border-2 border-secondary shadow-xl" />
-              </div>
-            </div>
+      {/* Contact Form Section */}
+      <section id="contact-form" className="max-w-4xl mx-auto px-8 py-24 bg-surface-high/50 rounded-2xl border border-primary/10 shadow-2xl relative overflow-hidden">
+        <div className="absolute -top-12 -right-12 opacity-5 pointer-events-none">
+           <Mail className="w-64 h-64 text-primary" />
+        </div>
+        
+        <div className="relative z-10">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-bold mb-4">Send a Raven</h2>
+            <p className="text-on-surface-variant italic">Have a quest for us? Our master artisans are ready to forge your vision.</p>
+            <div className="h-1 w-24 bg-primary mx-auto mt-6"></div>
           </div>
+
+          <form 
+            action="https://formsubmit.co/Jasukestd@gmail.com" 
+            method="POST"
+            className="space-y-6"
+          >
+            <input type="hidden" name="_subject" value="New Quest from Jasuke Studio!" />
+            <input type="hidden" name="_template" value="table" />
+            <input type="hidden" name="_captcha" value="false" />
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-2">
+                <label className="text-sm font-bold uppercase tracking-widest text-primary/80">Your Name</label>
+                <input 
+                  type="text" 
+                  name="name" 
+                  required 
+                  className="w-full bg-background border border-outline/30 rounded-sm px-4 py-3 focus:border-primary transition-colors outline-none text-on-surface"
+                  placeholder="Artisan Name..."
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-bold uppercase tracking-widest text-primary/80">Email Address</label>
+                <input 
+                  type="email" 
+                  name="email" 
+                  required 
+                  className="w-full bg-background border border-outline/30 rounded-sm px-4 py-3 focus:border-primary transition-colors outline-none text-on-surface"
+                  placeholder="Scroll@kingdom.com"
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-sm font-bold uppercase tracking-widest text-primary/80">Subject</label>
+              <input 
+                type="text" 
+                name="subject" 
+                required 
+                className="w-full bg-background border border-outline/30 rounded-sm px-4 py-3 focus:border-primary transition-colors outline-none text-on-surface"
+                placeholder="The Nature of your Quest..."
+              />
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-sm font-bold uppercase tracking-widest text-primary/80">Message</label>
+              <textarea 
+                name="message" 
+                required 
+                rows={5}
+                className="w-full bg-background border border-outline/30 rounded-sm px-4 py-3 focus:border-primary transition-colors outline-none text-on-surface resize-none"
+                placeholder="Describe the legend you wish to forge..."
+              ></textarea>
+            </div>
+
+            <button 
+              type="submit"
+              className="w-full bg-primary text-primary-foreground font-bold py-4 rounded-sm hover:brightness-110 active:scale-[0.98] transition-all shadow-lg shadow-primary/20 uppercase tracking-widest"
+            >
+              Dispatch Raven
+            </button>
+          </form>
         </div>
       </section>
       {/* The Team / The Guild Artisans */}
@@ -128,7 +183,7 @@ export function HomeView({ portfolio, articles, team }: {
           <div className="h-1.5 w-24 bg-primary mx-auto mt-6"></div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="flex flex-wrap justify-center gap-8">
           {team.map((member, i) => (
             <motion.div
               key={member.id}
@@ -137,10 +192,10 @@ export function HomeView({ portfolio, articles, team }: {
               viewport={{ once: true }}
               transition={{ delay: i * 0.1 }}
               whileHover={{ y: -10 }}
-              className="group relative bg-[#1a1a1a] rounded-xl overflow-hidden border border-white/5 hover:border-primary/30 transition-all duration-500 shadow-2xl"
+              className="group relative bg-[#1a1a1a] rounded-t-full rounded-b-xl overflow-hidden border border-white/5 hover:border-primary/30 transition-all duration-500 shadow-2xl w-full max-w-[260px] flex flex-col items-center text-center"
             >
               {/* Photo Container */}
-              <div className="relative h-80 overflow-hidden">
+              <div className="relative h-64 w-full overflow-hidden rounded-t-full">
                 <img 
                   src={member.photo_url} 
                   alt={member.name}
@@ -149,23 +204,23 @@ export function HomeView({ portfolio, articles, team }: {
                 <div className="absolute inset-0 bg-gradient-to-t from-[#1a1a1a] via-transparent to-transparent opacity-60"></div>
                 
                 {/* Role Badge */}
-                <div className="absolute bottom-4 left-4">
-                  <span className="px-3 py-1 bg-primary text-primary-foreground text-[10px] uppercase tracking-[0.2em] font-bold rounded-sm">
-                    {member.role}
+                <div className="absolute bottom-4 left-1/2 -translate-x-1/2 w-full px-4">
+                  <span className="inline-block px-3 py-1 bg-primary text-primary-foreground text-[10px] uppercase tracking-[0.2em] font-bold rounded-sm">
+                    {member.role === '-' ? 'Artisan' : member.role}
                   </span>
                 </div>
               </div>
 
               {/* Content */}
-              <div className="p-8">
-                <h3 className="text-2xl font-bold mb-3 group-hover:text-primary transition-colors">
+              <div className="p-6">
+                <h3 className="text-xl font-bold mb-3 group-hover:text-primary transition-colors">
                   {member.name}
                 </h3>
-                <p className="text-on-surface-variant text-sm leading-relaxed mb-8 line-clamp-3">
+                <p className="text-on-surface-variant text-xs leading-relaxed mb-6 line-clamp-3">
                   {member.description}
                 </p>
                 
-                {member.portfolio && (
+                {member.portfolio && member.portfolio !== '-' && (
                   <a 
                     href={member.portfolio}
                     target="_blank"
@@ -178,8 +233,8 @@ export function HomeView({ portfolio, articles, team }: {
               </div>
 
               {/* Decorative elements */}
-              <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-100 transition-opacity">
-                <Star className="w-6 h-6 text-primary fill-current" />
+              <div className="absolute top-8 right-8 p-0 opacity-10 group-hover:opacity-100 transition-opacity">
+                <Star className="w-5 h-5 text-primary fill-current" />
               </div>
             </motion.div>
           ))}

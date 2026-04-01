@@ -6,9 +6,10 @@ import { cn } from '@/src/lib/utils';
 interface NavbarProps {
   activeTab: string;
   setActiveTab: (tab: string) => void;
+  onContactClick: () => void;
 }
 
-export function Navbar({ activeTab, setActiveTab }: NavbarProps) {
+export function Navbar({ activeTab, setActiveTab, onContactClick }: NavbarProps) {
   const [isOpen, setIsOpen] = React.useState(false);
 
   const navItems = [
@@ -49,7 +50,10 @@ export function Navbar({ activeTab, setActiveTab }: NavbarProps) {
               {item.label}
             </button>
           ))}
-          <button className="bg-primary text-primary-foreground font-bold px-6 py-2 rounded-sm hover:shadow-[0_0_15px_rgba(255,179,0,0.4)] active:scale-95 transition-all duration-300">
+          <button 
+            onClick={onContactClick}
+            className="bg-primary text-primary-foreground font-bold px-6 py-2 rounded-sm hover:shadow-[0_0_15px_rgba(255,179,0,0.4)] active:scale-95 transition-all duration-300"
+          >
             Contact Us
           </button>
         </div>
@@ -84,7 +88,13 @@ export function Navbar({ activeTab, setActiveTab }: NavbarProps) {
             {item.label}
           </button>
         ))}
-        <button className="bg-primary text-primary-foreground font-bold px-8 py-4 rounded-sm">
+        <button 
+          onClick={() => {
+            onContactClick();
+            setIsOpen(false);
+          }}
+          className="bg-primary text-primary-foreground font-bold px-8 py-4 rounded-sm"
+        >
           Contact Us
         </button>
       </motion.div>

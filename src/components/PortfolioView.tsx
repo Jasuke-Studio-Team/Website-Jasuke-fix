@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { PortfolioItem } from '../types';
 
@@ -20,6 +20,17 @@ function toYouTubeEmbed(url: string): string {
 
 export function PortfolioView({ items }: { items: PortfolioItem[] }) {
   const [activeVideo, setActiveVideo] = useState<string | null>(null);
+  const [activeCategory, setActiveCategory] = useState<string>('All');
+
+  const categories = useMemo(() => {
+    const cats = items.map(item => item.category).filter(c => c && c !== '-');
+    return ['All', ...Array.from(new Set(cats))];
+  }, [items]);
+
+  const filteredItems = useMemo(() => {
+    if (activeCategory === 'All') return items;
+    return items.filter(item => item.category === activeCategory);
+  }, [items, activeCategory]);
 
   return (
     <div className="max-w-7xl mx-auto px-8 py-24">
@@ -33,19 +44,39 @@ export function PortfolioView({ items }: { items: PortfolioItem[] }) {
         </p>
       </div>
 
-      {items.length === 0 ? (
+      {categories.length > 1 && (
+        <div className="flex flex-wrap justify-center gap-4 mb-12">
+          {categories.map(category => (
+            <button
+              key={category}
+              onClick={() => setActiveCategory(category)}
+              className={`px-6 py-2 rounded-full text-sm font-bold uppercase tracking-widest transition-all ${
+                activeCategory === category
+                  ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/20'
+                  : 'bg-surface-high text-on-surface-variant border border-outline/10 hover:border-primary/50'
+              }`}
+            >
+              {category}
+            </button>
+          ))}
+        </div>
+      )}
+
+      {filteredItems.length === 0 ? (
         <p className="text-center text-on-surface-variant">No items found.</p>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {items.map((item, i) => (
-            <motion.div
-              key={item.id}
-              initial={{ opacity: 0, scale: 0.95 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              transition={{ delay: i * 0.08 }}
-              viewport={{ once: true }}
-              className="group bg-surface rounded-sm overflow-hidden border border-outline/10 hover:border-primary/30 transition-all duration-500 flex flex-col"
-            >
+        <motion.div layout className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <AnimatePresence mode="popLayout">
+            {filteredItems.map((item, i) => (
+              <motion.div
+                key={item.id}
+                layout
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.9 }}
+                transition={{ duration: 0.3 }}
+                className="group bg-surface rounded-sm overflow-hidden border border-outline/10 hover:border-primary/30 transition-all duration-500 flex flex-col"
+              >
               {/* Thumbnail */}
               <div className="aspect-video overflow-hidden relative flex-shrink-0">
                 <img
@@ -108,9 +139,10 @@ export function PortfolioView({ items }: { items: PortfolioItem[] }) {
                   )}
                 </div>
               </div>
-            </motion.div>
-          ))}
-        </div>
+              </motion.div>
+            ))}
+          </AnimatePresence>
+        </motion.div>
       )}
 
       {/* ── Video Modal ─────────────────────────────────────────── */}
