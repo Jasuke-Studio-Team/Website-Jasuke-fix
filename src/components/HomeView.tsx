@@ -1,12 +1,13 @@
 import React from 'react';
 import { motion } from 'motion/react';
 import { VideoPlayer } from './VideoPlayer';
-import { PortfolioItem, Article } from '../types';
+import { PortfolioItem, Article, TeamMember } from '../types';
 import { ArrowRight, Star } from 'lucide-react';
 
-export function HomeView({ portfolio, articles }: { 
+export function HomeView({ portfolio, articles, team }: { 
   portfolio: PortfolioItem[], 
   articles: Article[],
+  team: TeamMember[],
 }) {
   return (
     <div className="space-y-24 pb-24">
@@ -117,6 +118,71 @@ export function HomeView({ portfolio, articles }: {
               </div>
             </div>
           </div>
+        </div>
+      </section>
+      {/* The Team / The Guild Artisans */}
+      <section className="max-w-7xl mx-auto px-8 pb-24">
+        <div className="text-center mb-16">
+          <span className="text-primary italic mb-2 block font-medium">The High Council</span>
+          <h2 className="text-3xl md:text-5xl font-bold tracking-tight">The Guild Artisans</h2>
+          <div className="h-1.5 w-24 bg-primary mx-auto mt-6"></div>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+          {team.map((member, i) => (
+            <motion.div
+              key={member.id}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: i * 0.1 }}
+              whileHover={{ y: -10 }}
+              className="group relative bg-[#1a1a1a] rounded-xl overflow-hidden border border-white/5 hover:border-primary/30 transition-all duration-500 shadow-2xl"
+            >
+              {/* Photo Container */}
+              <div className="relative h-80 overflow-hidden">
+                <img 
+                  src={member.photo_url} 
+                  alt={member.name}
+                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 grayscale-[0.8] group-hover:grayscale-0"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#1a1a1a] via-transparent to-transparent opacity-60"></div>
+                
+                {/* Role Badge */}
+                <div className="absolute bottom-4 left-4">
+                  <span className="px-3 py-1 bg-primary text-primary-foreground text-[10px] uppercase tracking-[0.2em] font-bold rounded-sm">
+                    {member.role}
+                  </span>
+                </div>
+              </div>
+
+              {/* Content */}
+              <div className="p-8">
+                <h3 className="text-2xl font-bold mb-3 group-hover:text-primary transition-colors">
+                  {member.name}
+                </h3>
+                <p className="text-on-surface-variant text-sm leading-relaxed mb-8 line-clamp-3">
+                  {member.description}
+                </p>
+                
+                {member.portfolio && (
+                  <a 
+                    href={member.portfolio}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-primary border-b border-primary/0 hover:border-primary transition-all group/link underline decoration-primary/20 underline-offset-8"
+                  >
+                    View Scroll <ArrowRight className="w-3 h-3 transition-transform group-hover/link:translate-x-1" />
+                  </a>
+                )}
+              </div>
+
+              {/* Decorative elements */}
+              <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-100 transition-opacity">
+                <Star className="w-6 h-6 text-primary fill-current" />
+              </div>
+            </motion.div>
+          ))}
         </div>
       </section>
     </div>

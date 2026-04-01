@@ -88,6 +88,7 @@ export default function App() {
               <HomeView
                 portfolio={data.portfolio}
                 articles={data.articles}
+                team={data.team}
               />
             )}
             {activeTab === 'portfolio' && data && (

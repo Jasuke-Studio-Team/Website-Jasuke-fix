@@ -18,6 +18,7 @@ function doGet() {
     articles: getSheetData(ss.getSheetByName("Articles")),
     ip_ready: getSheetData(ss.getSheetByName("IP Ready")),
     ip_in_progress: getSheetData(ss.getSheetByName("IP In Progress")),
+    team: getSheetData(ss.getSheetByName("The Team")),
     lastUpdated: new Date().toISOString()
   };
 

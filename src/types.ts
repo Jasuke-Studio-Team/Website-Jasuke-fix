@@ -42,10 +42,20 @@ export interface IPInProgressStage {
   image_url: string;           // Image Url (col H)
 }
 
+export interface TeamMember {
+  id: string;
+  name: string;
+  role: string;
+  description: string;
+  portfolio?: string;
+  photo_url: string;
+}
+
 export interface CMSData {
   portfolio: PortfolioItem[];
   articles: Article[];
   ip_ready: IPReadyItem[];
   ip_in_progress: IPInProgressStage[];
+  team: TeamMember[];
   lastUpdated: string;
 }

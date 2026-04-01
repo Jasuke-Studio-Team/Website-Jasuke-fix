@@ -1,4 +1,4 @@
-import { CMSData, PortfolioItem, Article, IPReadyItem, IPInProgressStage } from '../types';
+import { CMSData, PortfolioItem, Article, IPReadyItem, IPInProgressStage, TeamMember } from '../types';
 
 // ─── Mock data (used when VITE_GAS_API_URL is not set) ────────────────────────
 const MOCK_DATA: CMSData = {
@@ -53,6 +53,16 @@ const MOCK_DATA: CMSData = {
       target_date: 'Q1 2026',
       image_url: 'https://picsum.photos/seed/bpkb/800/600',
     },
+  ],
+  team: [
+    {
+      id: 'T01',
+      name: 'Akhmad Tegar',
+      role: 'Game Director & Lead Developer',
+      description: 'The visionary guiding the Jasuke Studio projects with a passion for immersive storytelling.',
+      portfolio: 'https://akhmad-tegar.itch.io/',
+      photo_url: 'https://picsum.photos/seed/tegar/400/400',
+    }
   ],
   lastUpdated: new Date().toISOString(),
 };
@@ -128,11 +138,23 @@ export async function fetchCMSData(): Promise<CMSData> {
       image_url: item.image_url || `https://picsum.photos/seed/stage${i}/800/600`,
     }));
 
+    // ── Team (sheet: "The Team") ─────────────────────────────────────────────
+    // Headers: Nama, Role, Description, Portofolio, Photo
+    const team: TeamMember[] = (raw.team || []).map((item: any, i: number) => ({
+      id: String(item.id || i + 1),
+      name: item.nama || '-',
+      role: item.role || '-',
+      description: item.description || '-',
+      portfolio: (item.portofolio || '').toString().trim() || undefined,
+      photo_url: item.photo || `https://picsum.photos/seed/team${i}/400/400`,
+    }));
+
     return {
       portfolio,
       articles,
       ip_ready,
       ip_in_progress,
+      team,
       lastUpdated: raw.lastUpdated || new Date().toISOString(),
     };
 
