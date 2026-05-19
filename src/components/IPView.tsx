@@ -2,6 +2,7 @@ import React from 'react';
 import { motion } from 'motion/react';
 import { IPReadyItem, IPInProgressStage } from '../types';
 import { cn } from '@/src/lib/utils';
+import { SEOHead } from './SEOHead';
 
 const statusColors: Record<string, string> = {
   completed:    'bg-emerald-500/10 border-emerald-500/30 text-emerald-400',
@@ -38,6 +39,11 @@ export function IPView({ ipReady, ipInProgress }: IPViewProps) {
 
   return (
     <div className="max-w-7xl mx-auto px-8 py-24 space-y-32">
+      <SEOHead 
+        title="Our IP"
+        description="Discover Jasuke Studio's original intellectual properties — games, worlds, and chronicles forged within the Hearth."
+        canonicalPath="/ip"
+      />
 
       {/* ── Section 1 : See our IP (IP Ready) ─────────────────── */}
       <section>

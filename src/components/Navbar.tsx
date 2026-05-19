@@ -1,54 +1,56 @@
 import React from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import { motion } from 'motion/react';
 import { Menu, X, Swords, Map as MapIcon, BookOpen, Mail } from 'lucide-react';
 import { cn } from '@/src/lib/utils';
 
 interface NavbarProps {
-  activeTab: string;
-  setActiveTab: (tab: string) => void;
   onContactClick: () => void;
 }
 
-export function Navbar({ activeTab, setActiveTab, onContactClick }: NavbarProps) {
+export function Navbar({ onContactClick }: NavbarProps) {
   const [isOpen, setIsOpen] = React.useState(false);
+  const location = useLocation();
 
   const navItems = [
-    { id: 'home', label: 'Home', icon: Swords },
-    { id: 'portfolio', label: 'Portfolio', icon: MapIcon },
-    { id: 'ip', label: 'Our IP', icon: BookOpen },
-    { id: 'blog', label: 'Blog', icon: Mail },
+    { path: '/', label: 'Home', icon: Swords },
+    { path: '/portfolio', label: 'Portfolio', icon: MapIcon },
+    { path: '/ip', label: 'Our IP', icon: BookOpen },
+    { path: '/blog', label: 'Blog', icon: Mail },
   ];
+
+  function isActive(path: string) {
+    if (path === '/') return location.pathname === '/';
+    return location.pathname.startsWith(path);
+  }
 
   return (
     <>
       <nav className="fixed top-0 w-full z-50 flex justify-between items-center px-8 py-4 bg-background/80 backdrop-blur-md border-b border-primary/20 shadow-[0_4px_20px_rgba(255,179,0,0.08)]">
-        <div 
-          className="cursor-pointer"
-          onClick={() => setActiveTab('home')}
-        >
+        <Link to="/" className="cursor-pointer">
           <img 
             src="/Asset/logo Jasuke New.png" 
             alt="Jasuke Studio" 
             className="h-10 w-auto object-contain drop-shadow-[0_2px_4px_rgba(255,179,0,0.5)]"
             referrerPolicy="no-referrer"
           />
-        </div>
+        </Link>
 
         {/* Desktop Nav */}
         <div className="hidden md:flex items-center gap-8">
           {navItems.map((item) => (
-            <button
-              key={item.id}
-              onClick={() => setActiveTab(item.id)}
+            <Link
+              key={item.path}
+              to={item.path}
               className={cn(
                 "font-headline tracking-tight transition-all duration-300 relative py-1",
-                activeTab === item.id 
+                isActive(item.path)
                   ? "text-primary border-b-2 border-primary" 
                   : "text-on-surface-variant hover:text-on-surface"
               )}
             >
               {item.label}
-            </button>
+            </Link>
           ))}
           <button 
             onClick={onContactClick}
@@ -74,19 +76,17 @@ export function Navbar({ activeTab, setActiveTab, onContactClick }: NavbarProps)
         className="fixed inset-0 z-40 bg-background/95 backdrop-blur-xl md:hidden flex flex-col items-center justify-center gap-8"
       >
         {navItems.map((item) => (
-          <button
-            key={item.id}
-            onClick={() => {
-              setActiveTab(item.id);
-              setIsOpen(false);
-            }}
+          <Link
+            key={item.path}
+            to={item.path}
+            onClick={() => setIsOpen(false)}
             className={cn(
               "text-3xl font-headline tracking-tight",
-              activeTab === item.id ? "text-primary" : "text-on-surface-variant"
+              isActive(item.path) ? "text-primary" : "text-on-surface-variant"
             )}
           >
             {item.label}
-          </button>
+          </Link>
         ))}
         <button 
           onClick={() => {

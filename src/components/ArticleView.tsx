@@ -1,6 +1,8 @@
 import React, { useEffect } from 'react';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { motion } from 'motion/react';
 import { Article } from '../types';
+import { SEOHead } from './SEOHead';
 
 // Convert a YouTube watch URL to embed URL
 function toYouTubeEmbed(url: string): string {
@@ -31,43 +33,67 @@ function renderContent(text: string) {
 }
 
 interface ArticleViewProps {
-  article: Article;
   allArticles: Article[];
-  onBack: () => void;
-  onSelectArticle: (article: Article) => void;
 }
 
-export function ArticleView({ article, allArticles, onBack, onSelectArticle }: ArticleViewProps) {
-  const related = allArticles.filter((a) => a.id !== article.id).slice(0, 4);
-  const embedUrl = article.video_url ? toYouTubeEmbed(article.video_url) : '';
+export function ArticleView({ allArticles }: ArticleViewProps) {
+  const { articleId } = useParams<{ articleId: string }>();
+  const navigate = useNavigate();
+
+  const article = allArticles.find((a) => a.id === articleId);
+  const related = allArticles.filter((a) => a.id !== articleId).slice(0, 4);
 
   // Scroll to top when article changes
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
-  }, [article.id]);
+  }, [articleId]);
+
+  if (!article) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center gap-6">
+        <h1 className="text-4xl font-bold text-on-surface">Scroll Not Found</h1>
+        <p className="text-on-surface-variant">The ancient scroll you seek does not exist in our archives.</p>
+        <Link
+          to="/blog"
+          className="bg-primary text-primary-foreground font-bold px-6 py-3 rounded-sm hover:brightness-110 transition-all"
+        >
+          Return to the Library
+        </Link>
+      </div>
+    );
+  }
+
+  const embedUrl = article.video_url ? toYouTubeEmbed(article.video_url) : '';
 
   return (
     <div className="min-h-screen relative">
+      <SEOHead
+        title={article.title}
+        description={article.excerpt}
+        canonicalPath={`/article/${article.id}`}
+        ogImage={article.image_url}
+      />
+
       {/* ── Left Sidebar: Related Articles ─────────────────────── */}
       <aside className="hidden xl:flex flex-col h-screen fixed left-0 top-0 z-40 w-72 border-r border-stone-800 bg-stone-950/95 backdrop-blur-xl pt-24 overflow-y-auto">
         <div className="px-6 mb-6">
           {/* Back button */}
-          <button
-            onClick={onBack}
+          <Link
+            to="/blog"
             className="flex items-center gap-2 text-xs text-amber-500/70 hover:text-amber-400 uppercase tracking-widest font-bold mb-6 transition-colors group"
           >
             <span className="group-hover:-translate-x-1 transition-transform">←</span>
             Back to Scrolls
-          </button>
+          </Link>
           <h3 className="text-amber-500 text-xs tracking-widest uppercase font-bold">The Archives</h3>
           <p className="text-stone-200 text-xl font-headline mt-1">More to Read</p>
         </div>
 
         <nav className="flex flex-col gap-6 px-6">
           {related.map((rel) => (
-            <button
+            <Link
               key={rel.id}
-              onClick={() => onSelectArticle(rel)}
+              to={`/article/${rel.id}`}
               className="group flex flex-col gap-3 text-left transition-all"
             >
               <div className="relative aspect-video w-full overflow-hidden rounded border border-stone-800 group-hover:border-amber-500/40 transition-all duration-500">
@@ -85,17 +111,17 @@ export function ArticleView({ article, allArticles, onBack, onSelectArticle }: A
                   {rel.title}
                 </h4>
               </div>
-            </button>
+            </Link>
           ))}
         </nav>
 
         <div className="mt-auto p-6">
-          <button
-            onClick={onBack}
+          <Link
+            to="/blog"
             className="text-xs text-stone-500 hover:text-amber-500 transition-colors uppercase tracking-widest flex items-center gap-2"
           >
             View All Scrolls →
-          </button>
+          </Link>
         </div>
       </aside>
 
@@ -103,13 +129,13 @@ export function ArticleView({ article, allArticles, onBack, onSelectArticle }: A
       <main className="xl:ml-72">
         {/* Mobile back button */}
         <div className="xl:hidden px-6 pt-6">
-          <button
-            onClick={onBack}
+          <Link
+            to="/blog"
             className="flex items-center gap-2 text-xs text-amber-500/70 hover:text-amber-400 uppercase tracking-widest font-bold transition-colors group"
           >
             <span className="group-hover:-translate-x-1 transition-transform">←</span>
             Back to Scrolls
-          </button>
+          </Link>
         </div>
 
         {/* Article Hero Header */}
@@ -207,9 +233,9 @@ export function ArticleView({ article, allArticles, onBack, onSelectArticle }: A
               <p className="text-on-surface text-2xl font-headline mb-8">More to Read</p>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 {related.map((rel) => (
-                  <button
+                  <Link
                     key={rel.id}
-                    onClick={() => onSelectArticle(rel)}
+                    to={`/article/${rel.id}`}
                     className="group text-left flex flex-col gap-3 transition-all"
                   >
                     <div className="aspect-video overflow-hidden rounded border border-stone-800 group-hover:border-amber-500/40 transition-all">
@@ -219,7 +245,7 @@ export function ArticleView({ article, allArticles, onBack, onSelectArticle }: A
                       <span className="text-[10px] text-amber-500/70 uppercase tracking-tighter">{rel.category}</span>
                       <h4 className="text-stone-300 group-hover:text-amber-400 text-sm font-bold leading-tight transition-colors mt-1">{rel.title}</h4>
                     </div>
-                  </button>
+                  </Link>
                 ))}
               </div>
             </div>
@@ -235,12 +261,12 @@ export function ArticleView({ article, allArticles, onBack, onSelectArticle }: A
             <p className="text-on-surface-variant mb-8 max-w-md mx-auto">
               Return to the Imperial Library and discover more chronicles from the Hearth.
             </p>
-            <button
-              onClick={onBack}
-              className="bg-primary text-primary-foreground font-bold px-8 py-3 rounded-sm hover:scale-105 transition-transform"
+            <Link
+              to="/blog"
+              className="inline-block bg-primary text-primary-foreground font-bold px-8 py-3 rounded-sm hover:scale-105 transition-transform"
             >
               Back to All Scrolls
-            </button>
+            </Link>
           </div>
         </section>
       </main>

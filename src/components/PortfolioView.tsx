@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { PortfolioItem } from '../types';
+import { SEOHead } from './SEOHead';
 
 // Convert YouTube watch/short URL to embed URL
 function toYouTubeEmbed(url: string): string {
@@ -34,6 +35,11 @@ export function PortfolioView({ items }: { items: PortfolioItem[] }) {
 
   return (
     <div className="max-w-7xl mx-auto px-8 py-24">
+      <SEOHead 
+        title="Portfolio"
+        description="Explore the Grand Archives — a collection of games, 3D models, AR/VR experiences, and creative works forged by Jasuke Studio."
+        canonicalPath="/portfolio"
+      />
       <div className="text-center mb-16">
         <span className="inline-block mb-4 px-4 py-1.5 border border-primary/30 text-primary text-xs font-bold uppercase tracking-widest bg-primary/5">
           The Guild Archives

@@ -1,18 +1,20 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { motion } from 'motion/react';
 import { VideoPlayer } from './VideoPlayer';
 import { PortfolioItem, Article, TeamMember } from '../types';
 import { ArrowRight, Star, Mail } from 'lucide-react';
+import { SEOHead } from './SEOHead';
 
-export function HomeView({ portfolio, articles, team, onContactClick, onPortfolioClick }: { 
+export function HomeView({ portfolio, articles, team, onContactClick }: { 
   portfolio: PortfolioItem[], 
   articles: Article[],
   team: TeamMember[],
   onContactClick: () => void,
-  onPortfolioClick: () => void,
 }) {
   return (
     <div className="space-y-24 pb-24">
+      <SEOHead />
       {/* Hero Section */}
       <section className="relative min-h-[80vh] flex flex-col items-center justify-center text-center px-6 overflow-hidden">
         <div className="absolute inset-0 tavern-embers opacity-40 z-0" />
@@ -42,12 +44,12 @@ export function HomeView({ portfolio, articles, team, onContactClick, onPortfoli
             >
               Enter the Tavern
             </button>
-            <button 
-              onClick={onPortfolioClick}
+            <Link 
+              to="/portfolio"
               className="border border-outline text-on-surface font-bold px-8 py-4 rounded-sm hover:bg-surface-high transition-all"
             >
               Our Portfolio
-            </button>
+            </Link>
           </div>
         </motion.div>
       </section>
@@ -55,7 +57,7 @@ export function HomeView({ portfolio, articles, team, onContactClick, onPortfoli
       {/* Featured Video */}
       <section className="max-w-6xl mx-auto px-6">
         <VideoPlayer 
-          videoUrl="https://www.youtube.com/watch?v=dQw4w9WgXcQ" 
+          videoUrl="https://youtu.be/4oSByMI2mRU" 
           className="shadow-primary/10"
         />
       </section>
@@ -113,13 +115,12 @@ export function HomeView({ portfolio, articles, team, onContactClick, onPortfoli
           </div>
 
           <form 
-            action="https://formsubmit.co/Jasukestd@gmail.com" 
+            name="contact"
             method="POST"
+            data-netlify="true"
             className="space-y-6"
           >
-            <input type="hidden" name="_subject" value="New Quest from Jasuke Studio!" />
-            <input type="hidden" name="_template" value="table" />
-            <input type="hidden" name="_captcha" value="false" />
+            <input type="hidden" name="form-name" value="contact" />
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-2">

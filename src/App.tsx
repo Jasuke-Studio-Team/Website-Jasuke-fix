@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import { Navbar } from './components/Navbar';
 import { HomeView } from './components/HomeView';
 import { PortfolioView } from './components/PortfolioView';
@@ -6,14 +7,14 @@ import { IPView } from './components/IPView';
 import { BlogView } from './components/BlogView';
 import { ArticleView } from './components/ArticleView';
 import { fetchCMSData } from './services/cmsService';
-import { CMSData, Article } from './types';
+import { CMSData } from './types';
 import { motion, AnimatePresence } from 'motion/react';
 
 export default function App() {
-  const [activeTab, setActiveTab] = useState('home');
   const [data, setData] = useState<CMSData | null>(null);
   const [loading, setLoading] = useState(true);
-  const [selectedArticle, setSelectedArticle] = useState<Article | null>(null);
+  const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     async function loadData() {
@@ -24,30 +25,20 @@ export default function App() {
     loadData();
   }, []);
 
-  function handleTabChange(tab: string) {
-    setSelectedArticle(null);
-    setActiveTab(tab);
-  }
-
-  function handleSelectArticle(article: Article) {
-    setSelectedArticle(article);
+  // Scroll to top on route change
+  useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
-  }
-
-  function handleBackToBlog() {
-    setSelectedArticle(null);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }
+  }, [location.pathname]);
 
   function scrollToContact() {
-    if (activeTab !== 'home') {
-      setActiveTab('home');
+    if (location.pathname !== '/') {
+      navigate('/');
       setTimeout(() => {
         const contactForm = document.getElementById('contact-form');
         if (contactForm) {
           contactForm.scrollIntoView({ behavior: 'smooth' });
         }
-      }, 100);
+      }, 300);
     } else {
       const contactForm = document.getElementById('contact-form');
       if (contactForm) {
@@ -66,69 +57,61 @@ export default function App() {
     );
   }
 
-  // Full-screen article reading view
-  if (selectedArticle && data) {
-    return (
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={selectedArticle.id}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.3 }}
-        >
-          <ArticleView
-            article={selectedArticle}
-            allArticles={data.articles}
-            onBack={handleBackToBlog}
-            onSelectArticle={handleSelectArticle}
-          />
-        </motion.div>
-      </AnimatePresence>
-    );
-  }
-
   return (
     <div className="min-h-screen bg-background selection:bg-primary/30">
-      <Navbar 
-        activeTab={activeTab} 
-        setActiveTab={handleTabChange} 
-        onContactClick={scrollToContact}
-      />
+      <Navbar onContactClick={scrollToContact} />
 
       <main className="pt-20">
         <AnimatePresence mode="wait">
           <motion.div
-            key={activeTab}
+            key={location.pathname}
             initial={{ opacity: 0, x: 10 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -10 }}
             transition={{ duration: 0.3 }}
           >
-            {activeTab === 'home' && data && (
-              <HomeView
-                portfolio={data.portfolio}
-                articles={data.articles}
-                team={data.team}
-                onContactClick={scrollToContact}
-                onPortfolioClick={() => handleTabChange('portfolio')}
+            <Routes location={location}>
+              <Route
+                path="/"
+                element={
+                  data ? (
+                    <HomeView
+                      portfolio={data.portfolio}
+                      articles={data.articles}
+                      team={data.team}
+                      onContactClick={scrollToContact}
+                    />
+                  ) : null
+                }
               />
-            )}
-            {activeTab === 'portfolio' && data && (
-              <PortfolioView items={data.portfolio} />
-            )}
-            {activeTab === 'ip' && data && (
-              <IPView
-                ipReady={data.ip_ready}
-                ipInProgress={data.ip_in_progress}
+              <Route
+                path="/portfolio"
+                element={data ? <PortfolioView items={data.portfolio} /> : null}
               />
-            )}
-            {activeTab === 'blog' && data && (
-              <BlogView
-                articles={data.articles}
-                onSelectArticle={handleSelectArticle}
+              <Route
+                path="/ip"
+                element={
+                  data ? (
+                    <IPView
+                      ipReady={data.ip_ready}
+                      ipInProgress={data.ip_in_progress}
+                    />
+                  ) : null
+                }
               />
-            )}
+              <Route
+                path="/blog"
+                element={data ? <BlogView articles={data.articles} /> : null}
+              />
+              <Route
+                path="/article/:articleId"
+                element={
+                  data ? (
+                    <ArticleView allArticles={data.articles} />
+                  ) : null
+                }
+              />
+            </Routes>
           </motion.div>
         </AnimatePresence>
       </main>
